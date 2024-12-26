@@ -58,6 +58,9 @@ class RobustMultiUAVTargetEnv(gym.Env):
         self.target_consecutive_visits: np.ndarray = np.zeros(self.n_targets, dtype=np.int32)
         self.paths: np.ndarray = np.zeros((self.n_agents, self.max_steps, 2), dtype=np.float32)
         self.adjacency_matrix: np.ndarray = np.zeros((self.n_agents + 1, self.n_agents + 1), dtype=np.float32)
+
+        self.coverage_percentages = []
+        self.count = 0
         
         # Action and observation spaces
         self.action_space = spaces.MultiDiscrete([5] * self.n_agents)
@@ -227,8 +230,14 @@ class RobustMultiUAVTargetEnv(gym.Env):
         else:
             coverage_percentage = np.sum(self.visited_cells > 0) / (self.G1 * self.G2)
             done = coverage_percentage >= 0.99  # Allow for small numerical errors
-            
+
         truncated = self.timestep >= self.max_steps
+
+        if done or truncated:
+            self.coverage_percentages.append(np.sum(self.visited_cells > 0) / (self.G1 * self.G2))
+            print(max(self.coverage_percentages), "coverage percentage", self.coverage_percentages[-1], np.round(np.mean(self.coverage_percentages[-10:]), 2)) if self.count % 10 == 0 else None
+            self.count += 1
+            
         
         return self._get_obs(), float(reward), bool(done), bool(truncated), self._get_info()
 

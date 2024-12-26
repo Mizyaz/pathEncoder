@@ -3,5 +3,7 @@
 /best_path_model.pt
 /logs
 /models
+/results
 /training_progress.png
 /wandb
+/runs
