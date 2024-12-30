@@ -1,0 +1,471 @@
+{
+    "type": "object",
+    "properties": {
+      "n_agents": {
+        "type": "integer"
+      },
+      "grid_size": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer"
+          },
+          "y": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "x",
+          "y"
+        ],
+        "description": "Size of the environment grid where each cell is 50 meters"
+      },
+      "max_steps": {
+        "type": "integer"
+      },
+      "comm_dist": {
+        "type": "number"
+      },
+      "gcs_pos": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "integer"
+          },
+          "y": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "x",
+          "y"
+        ],
+        "description": "Position of ground control station"
+      },
+      "enable_connectivity": {
+        "type": "boolean"
+      },
+      "n_targets": {
+        "type": "integer"
+      },
+      "target_priorities": {
+        "type": "object",
+        "properties": {
+          "priorities": {
+            "type": "object",
+            "properties": {
+              "targets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "priority": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "priority"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "inform_times": {
+        "type": "integer"
+      },
+      "sensor_config": {
+        "type": "object",
+        "properties": {
+          "detection_range": {
+            "type": "number"
+          },
+          "base_reliability": {
+            "type": "number"
+          },
+          "noise_std": {
+            "type": "number"
+          },
+          "sensor_type": {
+            "type": "string",
+            "enum": [
+              "deterministic",
+              "probabilistic"
+            ]
+          }
+        },
+        "description": "Sensor configuration for target detection"
+      },
+      "drone_configs": {
+        "type": "object",
+        "properties": {
+          "drones": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "drone_type": {
+                  "type": "string",
+                  "enum": [
+                    "standard",
+                    "long_range",
+                    "high_speed",
+                    "energy_efficient",
+                    "sensor_focused"
+                  ]
+                },
+                "initial_position": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "integer"
+                    },
+                    "y": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "y"
+                  ]
+                }
+              },
+              "required": [
+                "drone_type"
+              ]
+            }
+          }
+        },
+        "description": "Configuration for each drone"
+      },
+      "target_configs": {
+        "type": "object",
+        "properties": {
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "target_type": {
+                  "type": "string",
+                  "enum": [
+                    "static",
+                    "random_walk",
+                    "patrol"
+                  ]
+                },
+                "priority": {
+                  "type": "number"
+                },
+                "speed": {
+                  "type": "number"
+                },
+                "movement_pattern": {
+                  "type": "object",
+                  "properties": {
+                    "waypoints": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "integer"
+                        },
+                        "y": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y"
+                      ]
+                    }
+                  },
+                  "description": "List of waypoints for patrol patterns"
+                }
+              },
+              "required": [
+                "target_type",
+                "priority"
+              ]
+            }
+          }
+        },
+        "description": "Configuration for each target"
+      },
+      "terrain_config": {
+        "type": "object",
+        "properties": {
+          "obstacles": {
+            "type": "object",
+            "properties": {
+              "positions": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "integer"
+                  },
+                  "y": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "x",
+                  "y"
+                ]
+              }
+            },
+            "description": "Static obstacle positions"
+          },
+          "charging_stations": {
+            "type": "object",
+            "properties": {
+              "positions": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "integer"
+                  },
+                  "y": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "x",
+                  "y"
+                ]
+              }
+            },
+            "description": "Charging station positions"
+          },
+          "comm_relays": {
+            "type": "object",
+            "properties": {
+              "positions": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "integer"
+                  },
+                  "y": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "x",
+                  "y"
+                ]
+              }
+            },
+            "description": "Communication relay positions"
+          },
+          "interference": {
+            "type": "object",
+            "properties": {
+              "base_level": {
+                "type": "number"
+              },
+              "high_interference_zones": {
+                "type": "object",
+                "properties": {
+                  "zones": {
+                    "type": "object",
+                    "properties": {
+                      "center": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "radius": {
+                        "type": "number"
+                      },
+                      "strength": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "center",
+                      "radius",
+                      "strength"
+                    ]
+                  }
+                }
+              },
+              "low_interference_corridors": {
+                "type": "object",
+                "properties": {
+                  "corridors": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "end": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "integer"
+                          },
+                          "y": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "x",
+                          "y"
+                        ]
+                      },
+                      "width": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "start",
+                      "end",
+                      "width"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "dynamic_obstacles": {
+            "type": "object",
+            "properties": {
+              "obstacles": {
+                "type": "object",
+                "properties": {
+                  "initial_position": {
+                    "type": "object",
+                    "properties": {
+                      "x": {
+                        "type": "integer"
+                      },
+                      "y": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "x",
+                      "y"
+                    ]
+                  },
+                  "pattern": {
+                    "type": "string",
+                    "enum": [
+                      "patrol",
+                      "random"
+                    ]
+                  },
+                  "waypoints": {
+                    "type": "object",
+                    "properties": {
+                      "x": {
+                        "type": "integer"
+                      },
+                      "y": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "x",
+                      "y"
+                    ]
+                  },
+                  "speed": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "initial_position",
+                  "pattern",
+                  "speed"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "obs_config": {
+        "type": "object",
+        "properties": {
+          "known_target_positions": {
+            "type": "boolean"
+          },
+          "known_target_priorities": {
+            "type": "boolean"
+          },
+          "known_time_slots": {
+            "type": "boolean"
+          }
+        }
+      },
+      "reward_weights": {
+        "type": "object",
+        "properties": {
+          "coverage": {
+            "type": "number"
+          },
+          "revisit": {
+            "type": "number"
+          },
+          "connectivity": {
+            "type": "number"
+          },
+          "target_detection": {
+            "type": "number"
+          },
+          "target_relay": {
+            "type": "number"
+          },
+          "target_completion": {
+            "type": "number"
+          },
+          "early_completion": {
+            "type": "number"
+          },
+          "load_balance": {
+            "type": "number"
+          },
+          "energy_efficiency": {
+            "type": "number"
+          },
+          "collision_penalty": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "required": [
+      "n_agents",
+      "grid_size",
+      "max_steps",
+      "n_targets"
+    ],
+    "description": "Configuration schema for robust multi-UAV target load balancing environment"
+  }

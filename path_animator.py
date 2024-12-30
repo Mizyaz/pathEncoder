@@ -26,6 +26,7 @@ class PathAnimator:
         connected_color: str = 'green',
         disconnected_color: str = 'red',
         inner_dot_size: float = 30,
+        target_positions: Optional[np.ndarray] = None,
         fps: int = 30
     ):
         """
@@ -65,7 +66,9 @@ class PathAnimator:
         self.connected_color = connected_color
         self.disconnected_color = disconnected_color
         self.inner_dot_size = inner_dot_size
+        self.target_positions = target_positions
         self.interval = 1000 * animation_duration / self.timesteps  # ms between frames
+        self.n_targets = target_positions.shape[0]
 
         # Set default colors if none provided
         if path_colors is None:
@@ -108,6 +111,14 @@ class PathAnimator:
             inner = self.ax.scatter([], [], s=self.inner_dot_size,
                                   color=self.disconnected_color, zorder=6)
             self.inner_markers.append(inner)
+
+        # Initialize target markers
+        if self.target_positions is not None:
+            self.target_markers = []
+            for i in range(self.n_targets):
+                marker = self.ax.scatter([], [], s=self.inner_dot_size*2,
+                                   color='black', zorder=5)
+                self.target_markers.append(marker)
 
         # Initialize connectivity lines
         if self.show_connectivity:
