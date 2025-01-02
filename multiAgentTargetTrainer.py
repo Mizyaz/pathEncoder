@@ -5,7 +5,7 @@ import numpy as np
 from typing import Dict, List
 import wandb
 from path_animator import PathAnimator
-from multiAgentTargetEnv import RobustMultiUAVTargetEnv as MultiUAVTargetEnv
+from multiAgentTargetEnv import MultiUAVTargetEnv as MultiUAVTargetEnv
 
 from sb3_contrib import TRPO
 
@@ -134,7 +134,8 @@ def compute_effective_horizon(n_steps: int, gamma: float = None, gae_lambda: flo
 def train_target_mission(
     config: Dict,
     total_timesteps: int = 1_000_000,
-    seed: int = 42
+    seed: int = 42,
+    name: str = "multi-uav-target-mission"
 ) -> PPO:
     """
     Enhanced training loop for target search and connect missions with PPO
@@ -142,6 +143,7 @@ def train_target_mission(
     # Initialize wandb
     run = wandb.init(
         project="multi-uav-target-mission",
+        id=name,
         config={
             "algorithm": "PPO",
             "total_timesteps": total_timesteps,
@@ -218,8 +220,8 @@ if __name__ == "__main__":
         "max_steps": 20,
         "comm_dist": 2*np.sqrt(2),
         "enable_connectivity": True,
-        "n_targets": 1,
-        "target_types": [2],  # One of each type
+        "n_targets": 3,
+        "target_types": [2, 2, 2],  # One of each type
         "reward_weights": {
             "coverage": 0,
             "revisit": 0,
@@ -232,4 +234,4 @@ if __name__ == "__main__":
     }
     
     # Train model
-    model = train_target_mission(config)
+    model = train_target_mission(config, name=f"multi-uav-target-mission-{config['n_targets']}-targets-{config['n_agents']}-agents-{config['grid_size']}-grid-size")

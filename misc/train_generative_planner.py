@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
 import wandb
 from torch.distributions import Categorical
-from multiAgentTargetEnv import RobustMultiUAVTargetEnv
+from multiAgentTargetEnv import MultiUAVTargetEnv
 from generative_path_planner import Generator, Discriminator, calculate_input_dim
 import torch.nn.functional as F
 
@@ -27,7 +27,7 @@ class ExperienceBuffer:
 class MultiAgentSeqGANTrainer:
     def __init__(self, env_config: Dict, gan_config: Dict):
         # Initialize environment
-        self.env = RobustMultiUAVTargetEnv(env_config)
+        self.env = MultiUAVTargetEnv(env_config)
         
         # Training configs
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

@@ -4,7 +4,7 @@ from gymnasium import spaces
 from typing import Dict, Tuple, List, Optional, Any
 import networkx as nx
 
-class RobustMultiUAVTargetEnv(gym.Env):
+class MultiUAVTargetEnv(gym.Env):
     """
     Enhanced Multi-UAV environment with robust state handling and consistent typing
     for target search, coverage, and information relay missions.
