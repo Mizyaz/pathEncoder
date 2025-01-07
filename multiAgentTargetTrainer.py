@@ -6,6 +6,7 @@ from typing import Dict, List
 import wandb
 from path_animator import PathAnimator
 from multiAgentTargetEnv import MultiUAVTargetEnv as MultiUAVTargetEnv
+import pickle
 
 from sb3_contrib import TRPO
 
@@ -155,9 +156,14 @@ def train_target_mission(
     def make_env():
         return MultiUAVTargetEnv(config)
     
+    
     env = DummyVecEnv([make_env for _ in range(1)])
     env = VecMonitor(env)
     eval_env = make_env()
+    print("Trying to save env")
+    env.envs[0].save("multi-uav-target-env.pkl")
+    print("Env saved")
+    
     
     # Compute effective horizon and learning parameters
     n_steps = 2048  # PPO default
@@ -210,7 +216,7 @@ def train_target_mission(
     print(f"Coverage: {final_metrics['mean_coverage']:.2f}%")
     
     wandb.finish()
-    return model
+    return model, env
 
 if __name__ == "__main__":
     # Configuration for heterogeneous target mission
@@ -234,4 +240,14 @@ if __name__ == "__main__":
     }
     
     # Train model
-    model = train_target_mission(config, name=f"multi-uav-target-mission-{config['n_targets']}-targets-{config['n_agents']}-agents-{config['grid_size']}-grid-size")
+    model, env = train_target_mission(config, 
+                                      name=f"multi-uav-target-mission-{config['n_targets']}-targets-{config['n_agents']}-agents-{config['grid_size']}-grid-size",
+                                      total_timesteps=1_000_000)
+
+    # Save the environment
+    env.envs[0].save("multi-uav-target-env.pkl")
+
+    reward_info = env.envs[0].reward_info
+
+    with open("reward_info.pkl", "wb") as f:
+        pickle.dump(reward_info, f)

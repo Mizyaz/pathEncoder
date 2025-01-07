@@ -3,8 +3,6 @@ import numpy as np
 from gymnasium import spaces
 from typing import Dict, Tuple, List, Optional, Any
 import networkx as nx
-import pickle
-
 
 class MultiUAVTargetEnv(gym.Env):
     """
@@ -63,8 +61,6 @@ class MultiUAVTargetEnv(gym.Env):
 
         self.coverage_percentages = []
         self.count = 0
-
-        self.reward_info = []
         
         # Action and observation spaces
         self.action_space = spaces.MultiDiscrete([5] * self.n_agents)
@@ -96,7 +92,6 @@ class MultiUAVTargetEnv(gym.Env):
         """Initialize environment state with explicit typing"""
         super().reset(seed=seed)
         self.timestep = 0
-
         
         # Initialize drone positions
         if options and "initial_positions" in options:
@@ -113,9 +108,6 @@ class MultiUAVTargetEnv(gym.Env):
                 for _ in range(self.n_targets)
             ], dtype=np.float32)
             
-        self.current_reward_info = {"target_positions": self.target_positions,
-                                    "reward_history": []}
-
         # Reset state arrays
         self.visited_cells = np.zeros((self.G1, self.G2), dtype=np.int32)
         self.detected_targets = np.zeros(self.n_targets, dtype=np.int32)
@@ -230,21 +222,6 @@ class MultiUAVTargetEnv(gym.Env):
         # Total reward
         reward = coverage_reward + revisit_penalty + connectivity_reward + target_reward
         
-        rewards_dict = {
-            "timestep": self.timestep,
-            "coverage_reward": coverage_reward,
-            "revisit_penalty": revisit_penalty,
-            "connectivity_reward": connectivity_reward,
-            "target_reward": target_reward,
-            "target_completion": self.target_completion,
-            "target_visits": self.target_visits,
-            "target_connected_visits": self.target_connected_visits,
-            "target_consecutive_visits": self.target_consecutive_visits,
-            "adjacency_matrix": self.adjacency_matrix
-        }
-
-        self.current_reward_info["reward_history"].append(rewards_dict)
-
         self.timestep += 1
         
         # Check termination
@@ -260,9 +237,6 @@ class MultiUAVTargetEnv(gym.Env):
             self.coverage_percentages.append(np.sum(self.visited_cells > 0) / (self.G1 * self.G2))
             print(max(self.coverage_percentages), "coverage percentage", self.coverage_percentages[-1], np.round(np.mean(self.coverage_percentages[-10:]), 2)) if self.count % 10 == 0 else None
             self.count += 1
-
-            self.reward_info.append(self.current_reward_info)
-            self.current_reward_info = {}
             
         
         return self._get_obs(), float(reward), bool(done), bool(truncated), self._get_info()
@@ -317,10 +291,6 @@ class MultiUAVTargetEnv(gym.Env):
                 
         return reward
     
-    def save(self, filename: str):
-        with open(filename, "wb") as f:
-            pickle.dump(self, f)
 
-    def load(self, filename: str):
-        with open(filename, "rb") as f:
-            return pickle.load(f)
+
+    
