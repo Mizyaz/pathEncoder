@@ -9,7 +9,6 @@ import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
 
 def get_path_model_chat_session():
-    genai.configure(api_key="AIzaSyBWyl5q3sgtdCknUjfJYaVsrhTUNS-n9FE")
 
     # Create the model
     generation_config = {
